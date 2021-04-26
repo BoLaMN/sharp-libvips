@@ -461,12 +461,12 @@ make install/strip
 fi
 
 if [ "$PDFIUM" = true ]; then
+PDFIUM_URL=https://github.com/bblanchon/pdfium-binaries/releases/download/chromium/${VERSION_PDFIUM}
 if [ "$LINUX" = true ]; then
-  PLATFORM_PDFIUM=linux
+  $CURL ${PDFIUM_URL}/pdfium-linux.tgz | tar --format=gnu -xf - -C ${TARGET}
 elif [ "$DARWIN" = true ]; then
-  PLATFORM_PDFIUM=darwin-x64
+  $CURL ${PDFIUM_URL}/pdfium-darwin-x64.tgz | tar -zxvf - -C ${TARGET}
 fi
-$CURL https://github.com/bblanchon/pdfium-binaries/releases/download/chromium/${VERSION_PDFIUM}/pdfium-${PLATFORM_PDFIUM}.tgz | tar -zxvf - -C ${TARGET}
 cat > ${TARGET}/lib/pkgconfig/pdfium.pc << EOF
 prefix=${TARGET}
 exec_prefix=\${prefix}
