@@ -490,7 +490,7 @@ local:\n\
     g_param_spec_types;\n\
 };" > vips.map
 PKG_CONFIG="pkg-config --static" CFLAGS="${CFLAGS} -O3" CXXFLAGS="${CXXFLAGS} -O3" ./autogen.sh --prefix ${TARGET} --enable-shared --disable-static --disable-dependency-tracking \
-  --disable-debug --disable-deprecated --disable-introspection --without-analyze --without-cfitsio \
+  --disable-debug --without-doxygen --disable-deprecated --disable-introspection --without-analyze --without-cfitsio \
   --without-matio --without-nifti --without-OpenEXR \
   --without-openslide --without-ppm --without-radiance \
   ${PDFIUM:+--with-pdfium} ${POPPLER:+--without-pdfium --with-poppler}
@@ -586,13 +586,14 @@ rm -rf lib
 mv lib-filtered lib
 
 DATE=$(date '+%Y-%m-%d')
+NAME=libvips-${VERSION_VIPS}-${PLATFORM}-${PDFIUM:+pdfium}${POPPLER:+poppler}-${DATE}
 
-tar chzf ${PACKAGE}/libvips-${VERSION_VIPS}-${PLATFORM}-${DATE}.tar.gz \
+tar chzf ${PACKAGE}/${NAME}.tar.gz \
   include \
   lib \
   *.json
 
-#advdef --recompress --shrink-insane ${PACKAGE}/libvips-${VERSION_VIPS}-${PLATFORM}.tar.gz
-rm -fr ${PACKAGE}/libvips-${VERSION_VIPS}-${PLATFORM}-${DATE}.tar.br
-gunzip -c ${PACKAGE}/libvips-${VERSION_VIPS}-${PLATFORM}-${DATE}.tar.gz | brotli -q 0 -o ${PACKAGE}/libvips-${VERSION_VIPS}-${PLATFORM}-${DATE}.tar.br
-chmod 644 ${PACKAGE}/libvips-${VERSION_VIPS}-${PLATFORM}-${DATE}.tar.*
+#advdef --recompress --shrink-insane ${PACKAGE}/${NAME}.tar.gz
+rm -fr ${PACKAGE}/${NAME}.tar.br
+gunzip -c ${PACKAGE}/${NAME}.tar.gz | brotli -q 0 -o ${PACKAGE}/${NAME}.tar.br
+chmod 644 ${PACKAGE}/${NAME}.tar.*
