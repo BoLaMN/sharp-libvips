@@ -1,41 +1,39 @@
-FROM centos:7
-LABEL maintainer="Lovell Fuller <npm@lovell.info>"
-
-# Create CentOS 7 (glibc 2.17) container suitable for building Linux x64 binaries
+FROM amazonlinux:2
 
 # Path settings
 ENV \
   RUSTUP_HOME="/usr/local/rustup" \
   CARGO_HOME="/usr/local/cargo" \
-  PATH="/usr/local/cargo/bin:/opt/rh/devtoolset-9/root/usr/bin:$PATH"
+  PATH="/usr/local/cargo/bin:$PATH"
 
 # Build dependencies
-RUN \
-  yum update -y && \
-  yum install -y epel-release centos-release-scl && \
-  yum group install -y "Development Tools" && \
-  yum install -y --setopt=tsflags=nodocs \
-    advancecomp \
-    brotli \
-    cmake3 \
-    devtoolset-9-gcc \
-    devtoolset-9-gcc-c++ \
-    glib2-devel \
-    gobject-introspection-devel \
+RUN yum update -y \
+  && yum groupinstall -y "Development Tools" \
+  && yum install -y --setopt=tsflags=nodocs \
+    wget \
+    tar \
     gperf \
     gtk-doc \
     jq \
     nasm \
-    ninja-build \
+    libtool \
     prelink \
     python3 \
-    && \
-  curl https://sh.rustup.rs -sSf | sh -s -- -y \
+    gcc-c++ \
+    advancecomp \
+    cmake3 \
+    gobject-introspection-devel \
+    swig \
+  && pip3 install meson ninja \
+  && ln -s /usr/bin/cmake3 /usr/bin/cmake \
+  && ln -s /usr/bin/ninja-build /usr/bin/ninja \
+  && curl https://sh.rustup.rs -sSf | sh -s -- -y \
     --no-modify-path \
-    --profile minimal \
-    && \
-  ln -s /usr/bin/cmake3 /usr/bin/cmake && \
-  pip3 install meson
+    --profile minimal
+
+RUN yum install -y \
+  https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+RUN yum install -y libcxx brotli
 
 # Compiler settings
 ENV \
